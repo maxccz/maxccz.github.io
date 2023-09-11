@@ -82,8 +82,8 @@ analytics:
 author:
   name             : "Max c Zhang"
   avatar           : "download.jpg"
-  bio              : "Your biography for the left-hand sidebar"
-  location         : "Location"
+  bio              : "Current Freshmen at Boston College, majoring in Computer Science and Graduating in 2027"
+  location         : "Boston, MA"
   employer         :
   pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
   googlescholar    : "http://yourfullgooglescholarurl.com"
@@ -109,7 +109,7 @@ author:
   stackoverflow    : # http://stackoverflow.com/users/123456/username
   steam            :
   tumblr           :
-  twitter          : "https://twitter.com/Maxc_z"
+  twitter          : "Maxcz"
   vine             :
   weibo            :
   xing             :
