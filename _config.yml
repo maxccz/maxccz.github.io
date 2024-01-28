@@ -7,7 +7,7 @@
 
 # Site Settings
 locale                   : "en-US"
-title                    : "Max Zhang / BC STUDENT"
+title                    : "Max Zhang"
 title_separator          : "-"
 name                     : &name "Max Zhang"
 description              : &description "Hi this is Max"
@@ -81,7 +81,7 @@ analytics:
 # Site Author
 author:
   name             : "Max C. Zhang"
-  avatar           : "download.jpg"
+  avatar           : "download"
   bio              : "Current Freshmen at Boston College, majoring in Computer Science and Graduating in 2027"
   location         : "Boston, MA"
   employer         :
@@ -102,8 +102,8 @@ author:
   instagram        :
   impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   lastfm           :
-  linkedin         :
-  orcid            : "http://orcid.org/yourorcidurl"
+  linkedin         : "maxczhang"
+  orcid            :
   pinterest        :
   soundcloud       :
   stackoverflow    : # http://stackoverflow.com/users/123456/username
