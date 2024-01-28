@@ -80,14 +80,14 @@ analytics:
 
 # Site Author
 author:
-  name             : "Max c Zhang"
+  name             : "Max C. Zhang"
   avatar           : "download.jpg"
   bio              : "Current Freshmen at Boston College, majoring in Computer Science and Graduating in 2027"
   location         : "Boston, MA"
   employer         :
-  pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
-  googlescholar    : "http://yourfullgooglescholarurl.com"
-  email            :
+  pubmed           :
+  googlescholar    :
+  email            : "mczmax111@gmail.com"
   researchgate     :  # example: "https://www.researchgate.net/profile/yourprofile"
   uri              :
   bitbucket        :
