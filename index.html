@@ -1,12 +1,53 @@
 <head>
   <style>
-    .slide-in {
-      animation: slideDown 1.5s ease;
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      height: 100vh;
+      margin: 0;
+    }
+    #intro {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #262626;
+      color: #fff;
+      font-size: 6vw;
+      z-index: 10;
+      animation: slideDown 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      animation-fill-mode: forwards;
+    }
+    #intro.slide-up {
+      animation: slideUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      animation-fill-mode: forwards;
     }
     @keyframes slideDown {
       from { transform: translateY(-100%); }
-      to   { transform: translateY(0); }
+      to   { transform: translateY(0%); }
     }
+    @keyframes slideUp {
+      from { transform: translateY(0%); }
+      to   { transform: translateY(-100%); }
+    }
+    #bio {
+      display: none;
+      padding: 2rem;
+      max-width: 700px;
+      margin: 80px auto 0 auto;
+      font-size: 1.6rem;
+      color: #333;
+      background: #f5f5f5;
+      border-radius: 12px;
+    }
+
   </style>
 </head>
 <div id="intro" class="slide-in">Hi!</div>
