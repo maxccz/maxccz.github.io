@@ -13,6 +13,10 @@
     body {
       height: 100vh;
       margin: 0;
+      background: #000;
+    }
+    #bio, #projects {
+      display: none;
     }
     #intro {
       position: fixed;
@@ -51,11 +55,16 @@
     <p>Projects go here.</p>
   </section>
   <script>
+    setTimeout(function() {
+      document.body.style.background = "#fff"; 
+      document.getElementById('intro').style.display = 'flex';
+      document.getElementById('intro').style.animation = 'slideDownPause 3.5s cubic-bezier(0.8, 0.0, 0.2, 1) forwards';
+    }, 500);
     setTimeout(() => {
       document.getElementById('intro').style.display = 'none';
       document.getElementById('projects').style.display = 'block';
       document.getElementById('bio').style.display = 'block';
-    }, 3600);
+    }, 4100);
   </script>
 </body>
 </html>
