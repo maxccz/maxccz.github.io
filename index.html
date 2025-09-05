@@ -27,16 +27,14 @@
       color: #fff;
       font-size: 6vw;
       z-index: 10;
-      animation: slideDownPause 2.5s linear;
+      animation: slideDownPause 2.5s cubic-bezier(0.0, 0.0, 0.2, 1) linear;
       animation-fill-mode: forwards;
     }
 
     @keyframes slideDownPause {
       0% {transform: translateY(-100%);}
       50% {transform: translateY(0%);}
-      80% {transform: translateY(0%);}
-      100% {transform: translateY(120vh);}
-    }
+      100% {transform: translateY(100%);}
     }
 
   </style>
