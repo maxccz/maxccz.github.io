@@ -15,33 +15,26 @@
       margin: 0;
     }
     #intro {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #262626;
-      color: #fff;
-      font-size: 6vw;
-      z-index: 10;
-      animation: slideDown 1.5s cubic-bezier(0.45, 0, 0.27, 1.55);
-      animation-fill-mode: forwards;
-    }
-    #intro.slide-up {
-      animation: slideDown 1.5s cubic-bezier(0.45, 0, 0.27, 1.55);
-      animation-fill-mode: forwards;
-    }
-    @keyframes slideDown {
-      from { transform: translateY(-100%); }
-      to   { transform: translateY(0%); }
-    }
-    @keyframes slideUp {
-      from { transform: translateY(0%); }
-      to   { transform: translateY(-100%); }
-    }
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #262626;
+    color: #fff;
+    font-size: 6vw;
+    z-index: 10;
+    animation: slideDown 1.5s linear;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to   { transform: translateY(0%); }
+  }
   </style>
 </head>
 <body>
@@ -56,11 +49,6 @@
     <p>Projects go here.</p>
   </section>
   <script>
-    
-    setTimeout(() => {
-      document.getElementById('intro').classList.add('slide-up');
-    }, 1100);
-
     setTimeout(() => {
       document.getElementById('intro').style.display = 'none';
       document.getElementById('projects').style.display = 'block';
