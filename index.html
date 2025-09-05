@@ -15,26 +15,30 @@
       margin: 0;
     }
     #intro {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #262626;
-    color: #fff;
-    font-size: 6vw;
-    z-index: 10;
-    animation: slideDown 1.5s linear;
-    animation-fill-mode: forwards;
-  }
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #262626;
+      color: #fff;
+      font-size: 6vw;
+      z-index: 10;
+      animation: slideDownPause 2.5s linear;
+      animation-fill-mode: forwards;
+    }
 
-  @keyframes slideDown {
-    from { transform: translateY(-100%); }
-    to   { transform: translateY(0%); }
-  }
+    @keyframes slideDownPause {
+      0% {transform: translateY(-100%);}
+      50% {transform: translateY(0%);}
+      80% {transform: translateY(0%);}
+      100% {transform: translateY(100%);}
+    }
+    }
+
   </style>
 </head>
 <body>
