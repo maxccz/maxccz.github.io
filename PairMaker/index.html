@@ -1,69 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Max's Website</title>
+  <meta charset="UTF-8">
+  <title>PairMaker</title>
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      height: 100vh;
-      margin: 0;
-      background: #fbfaf2;
-    }
-    #bio, #projects, #PairMaker {
-      display: none;
-    }
-    #intro {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fbfaf2;
-      color: #000;
-      font-size: 6vw;
-      z-index: 10;
-      animation: slideDownPause 2.5s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
-      animation-fill-mode: forwards;
-    }
-
-    @keyframes slideDownPause {
-      0% {transform: translateY(-80%);}
-      50% {transform: translateY(0%);}
-      100% {transform: translateY(100%);}
-    }
-
+    #pairings-list { white-space: pre-line; font-family: monospace; margin-top: 1em; }
+    button { margin-top: 30px; font-size: 1.2em; }
   </style>
 </head>
 <body>
-  <div id="intro">Hi!</div>
-  <nav>
-    <a href="/" class="nav-link">Home</a>
-    <a href="/PairMaker/" class="nav-link">PairMaker</a>
-  </nav>
-  </div>
-  <section id="bio">
-    <h1>About Me</h1>
-    <p>Your biography goes here.</p>
-    <image src = "images/taishi.jpg">
-  </section>
-  <section id ="projects">
-    <h1>Projects I've Worked On</h1>
-    <p>Projects go here.</p>
-  </section>
-  <script>
-    setTimeout(() => {
-      document.getElementById('projects').style.display = 'block';
-      document.getElementById('bio').style.display = 'block';
-    }, 1000);
-  </script>
+  <h1>Random Pair Maker</h1>
+  <button onclick="makePairs()">Generate New Pairs</button>
+  <div id="pairings-list"></div>
+
+<script>
+// Copy the list of names from your script
+const names = `Luke B Aspatore
+Hashim A Ayub
+Lovisa Båge
+Daniel B Beard
+E'Lla C Boykin
+Drew K Cabral
+Julia Bakke Clough
+Shuyue Fan
+William P Garland
+William J Glyman
+Jocelyne R Grier
+Maxwell R Guo
+Yiran Guo
+Andrew R Harrick
+Aidan J Harrington
+Daejin Jung
+Zimin Jung
+Martin T Killeen
+Ryan J Kim
+Ruben Levison
+Richard K Li
+Vanessa Liu
+Laura E Lum
+Jack H Mainelli
+Helly Mukesh Maniya
+Maeve Miller
+Lily J Park
+Magnus L Pedersen
+Tahha Pervez
+Beatriz S Serrano Amadeo Marques
+Shanzay Shajani
+Ryan Song
+Pedro Henrique Sun Camargo
+Jonathan K Trescher
+Yichang Wang
+Tiantian Xiang
+Jacob S Yim`;
+
+function makePairs() {
+  let names_list = names.split('\n').filter(n => n.trim());
+  for (let i = names_list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [names_list[i], names_list[j]] = [names_list[j], names_list[i]];
+  }
+
+  let pairings = {};
+  for (let i = 0; i < names_list.length; i += 2) {
+    if (i+1 < names_list.length) {
+      pairings[names_list[i]] = names_list[i+1];
+    }
+  }
+  if (names_list.length % 2 === 1) {
+    let last_person = names_list[names_list.length - 1];
+    let keys = Object.keys(pairings);
+    let random_person = keys[Math.floor(Math.random() * keys.length)];
+    pairings[random_person] += ' and ' + last_person;
+  }
+
+  let result = '';
+  for (let a in pairings) {
+    result += `${a} is paired with ${pairings[a]}\n`;
+  }
+  document.getElementById('pairings-list').textContent = result;
+}
+</script>
 </body>
 </html>
