@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Max's Website</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      height: 100vh;
+      margin: 0;
+      background: #fbfaf2;
+    }
+    #bio, #projects, #PairMaker {
+      display: none;
+    }
+    #intro {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fbfaf2;
+      color: #000;
+      font-size: 6vw;
+      z-index: 10;
+      animation: slideDownPause 2.5s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+      animation-fill-mode: forwards;
+    }
 
+    @keyframes slideDownPause {
+      0% {transform: translateY(-80%);}
+      50% {transform: translateY(0%);}
+      100% {transform: translateY(100%);}
+    }
+
+  </style>
+</head>
+<body>
+  <div id="intro">Hi!</div>
+  <nav>
+    <a href="/" class="nav-link">Home</a>
+    <a href="/PairMaker/" class="nav-link">PairMaker</a>
+  </nav>
+  </div>
+  <section id="bio">
+    <h1>About Me</h1>
+    <p>Your biography goes here.</p>
+    <image src = "images/taishi.jpg">
+  </section>
+  <section id ="projects">
+    <h1>Projects I've Worked On</h1>
+    <p>Projects go here.</p>
+  </section>
+  <script>
+    setTimeout(() => {
+      document.getElementById('projects').style.display = 'block';
+      document.getElementById('bio').style.display = 'block';
+    }, 1000);
+  </script>
+</body>
+</html>
