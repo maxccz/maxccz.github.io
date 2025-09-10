@@ -2,19 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>PairMaker</title>
+  <title>Autocomplete Name Removal</title>
   <style>
-    #pairings-list { white-space: pre-line; font-family: monospace; margin-top: 1em; }
-    button { margin-top: 30px; font-size: 1.2em; }
+    #dropdown-list {
+      border: 1px solid #ccc;
+      max-height: 140px;
+      overflow-y: auto;
+      position: absolute;
+      background: #fff;
+      width: 260px;
+      z-index: 10;
+      display: none;
+    }
+    .dropdown-item {
+      padding: 8px;
+      cursor: pointer;
+    }
+    .dropdown-item:hover {
+      background: #ececec;
+    }
+    #chosen-names { margin-top: 1.2em; }
   </style>
 </head>
 <body>
-  <h1>Random Pair Maker</h1>
-  <button onclick="makePairs()">Generate New Pairs</button>
-  <div id="pairings-list"></div>
-
+  <h2>Remove a Name</h2>
+  <div style="position:relative;">
+    <input id="name-input" type="text" autocomplete="off" placeholder="Start typing a name..." style="width:260px; padding:8px; font-size:1em;">
+    <div id="dropdown-list"></div>
+  </div>
+  <div>
+    <h4>Removed Names</h4>
+    <ul id="chosen-names"></ul>
+  </div>
 <script>
-// Copy the list of names from your script
 const names = `Luke B Aspatore
 Hashim A Ayub
 Lovisa Båge
@@ -51,34 +71,51 @@ Pedro Henrique Sun Camargo
 Jonathan K Trescher
 Yichang Wang
 Tiantian Xiang
-Jacob S Yim`;
+Jacob S Yim`.split('\n').map(s => s.trim()).filter(Boolean);
 
-function makePairs() {
-  let names_list = names.split('\n').filter(n => n.trim());
-  for (let i = names_list.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [names_list[i], names_list[j]] = [names_list[j], names_list[i]];
-  }
+let availableNames = [...names];
 
-  let pairings = {};
-  for (let i = 0; i < names_list.length; i += 2) {
-    if (i+1 < names_list.length) {
-      pairings[names_list[i]] = names_list[i+1];
-    }
-  }
-  if (names_list.length % 2 === 1) {
-    let last_person = names_list[names_list.length - 1];
-    let keys = Object.keys(pairings);
-    let random_person = keys[Math.floor(Math.random() * keys.length)];
-    pairings[random_person] += ' and ' + last_person;
-  }
+const input = document.getElementById('name-input');
+const dropdown = document.getElementById('dropdown-list');
+const chosenList = document.getElementById('chosen-names');
 
-  let result = '';
-  for (let a in pairings) {
-    result += `${a} is paired with ${pairings[a]}\n`;
+function updateDropdown() {
+  const val = input.value.trim().toLowerCase();
+  dropdown.innerHTML = '';
+  if (!val) {
+    dropdown.style.display = 'none';
+    return;
   }
-  document.getElementById('pairings-list').textContent = result;
+  const filtered = availableNames.filter(name => name.toLowerCase().includes(val));
+  if (filtered.length === 0) {
+    dropdown.style.display = 'none';
+    return;
+  }
+  filtered.forEach(name => {
+    const div = document.createElement('div');
+    div.className = 'dropdown-item';
+    div.textContent = name;
+    div.onclick = () => selectName(name);
+    dropdown.appendChild(div);
+  });
+  dropdown.style.display = 'block';
 }
+
+function selectName(name) {
+  availableNames = availableNames.filter(n => n !== name); // Remove from available names
+  const li = document.createElement('li');
+  li.textContent = name;
+  chosenList.appendChild(li);
+  input.value = '';
+  dropdown.style.display = 'none';
+}
+
+input.addEventListener('input', updateDropdown);
+
+document.addEventListener('click', (e) => {
+  if (!input.contains(e.target) && !dropdown.contains(e.target))
+    dropdown.style.display = 'none';
+});
 </script>
 </body>
 </html>
