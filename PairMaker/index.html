@@ -41,119 +41,117 @@
 <div id="pairings-list"></div>
 
 <script>
-const names = `Luke B Aspatore
-Hashim A Ayub
-Lovisa Båge
-Daniel B Beard
-E'Lla C Boykin
-Drew K Cabral
-Julia Bakke Clough
-Shuyue Fan
-William P Garland
-William J Glyman
-Jocelyne R Grier
-Maxwell R Guo
-Yiran Guo
-Andrew R Harrick
-Aidan J Harrington
-Daejin Jung
-Zimin Jung
-Martin T Killeen
-Ryan J Kim
-Ruben Levison
-Richard K Li
-Vanessa Liu
-Laura E Lum
-Jack H Mainelli
-Helly Mukesh Maniya
-Maeve Miller
-Lily J Park
-Magnus L Pedersen
-Tahha Pervez
-Beatriz S Serrano Amadeo Marques
-Shanzay Shajani
-Ryan Song
-Pedro Henrique Sun Camargo
-Jonathan K Trescher
-Yichang Wang
-Tiantian Xiang
-Jacob S Yim`.split('\n').map(s => s.trim()).filter(Boolean);
-
-let availableNames = [...names];
-
-const input = document.getElementById('name-input');
-const dropdown = document.getElementById('dropdown-list');
-const chosenList = document.getElementById('chosen-names');
-const pairingsDiv = document.getElementById('pairings-list');
-
-// Dropdown logic
-function updateDropdown() {
-  const val = input.value.trim().toLowerCase();
-  dropdown.innerHTML = '';
-  if (!val) {
-    dropdown.style.display = 'none';
-    return;
+  const names = `Luke B Aspatore
+    Hashim A Ayub
+    Lovisa Båge
+    Daniel B Beard
+    E'Lla C Boykin
+    Drew K Cabral
+    Julia Bakke Clough
+    Shuyue Fan
+    William P Garland
+    William J Glyman
+    Jocelyne R Grier
+    Maxwell R Guo
+    Yiran Guo
+    Andrew R Harrick
+    Aidan J Harrington
+    Daejin Jung
+    Zimin Jung
+    Martin T Killeen
+    Ryan J Kim
+    Ruben Levison
+    Richard K Li
+    Vanessa Liu
+    Laura E Lum
+    Jack H Mainelli
+    Helly Mukesh Maniya
+    Maeve Miller
+    Lily J Park
+    Magnus L Pedersen
+    Tahha Pervez
+    Beatriz S Serrano Amadeo Marques
+    Shanzay Shajani
+    Ryan Song
+    Pedro Henrique Sun Camargo
+    Jonathan K Trescher
+    Yichang Wang
+    Tiantian Xiang
+    Jacob S Yim`.split('\n').map(s => s.trim()).filter(Boolean);
+  
+  let availableNames = [...names];
+  
+  const input = document.getElementById('name-input');
+  const dropdown = document.getElementById('dropdown-list');
+  const chosenList = document.getElementById('chosen-names');
+  const pairingsDiv = document.getElementById('pairings-list');
+  
+  // Dropdown logic
+  function updateDropdown() {
+    const val = input.value.trim().toLowerCase();
+    dropdown.innerHTML = '';
+    if (!val) {
+      dropdown.style.display = 'none';
+      return;
+    }
+    const filtered = availableNames.filter(name => name.toLowerCase().includes(val));
+    if (filtered.length === 0) {
+      dropdown.style.display = 'none';
+      return;
+    }
+    filtered.forEach(name => {
+      const div = document.createElement('div');
+      div.className = 'dropdown-item';
+      div.textContent = name;
+      div.onclick = () => selectName(name);
+      dropdown.appendChild(div);
+    });
+    dropdown.style.display = 'block';
   }
-  const filtered = availableNames.filter(name => name.toLowerCase().includes(val));
-  if (filtered.length === 0) {
+  
+  function selectName(name) {
+    availableNames = availableNames.filter(n => n !== name); // Remove from available
+    const li = document.createElement('li');
+    li.textContent = name;
+    chosenList.appendChild(li);
+    input.value = '';
     dropdown.style.display = 'none';
-    return;
   }
-  filtered.forEach(name => {
-    const div = document.createElement('div');
-    div.className = 'dropdown-item';
-    div.textContent = name;
-    div.onclick = () => selectName(name);
-    dropdown.appendChild(div);
+  
+  input.addEventListener('input', updateDropdown);
+  document.addEventListener('click', (e) => {
+    if (!input.contains(e.target) && !dropdown.contains(e.target))
+      dropdown.style.display = 'none';
   });
-  dropdown.style.display = 'block';
-}
-
-function selectName(name) {
-  availableNames = availableNames.filter(n => n !== name); // Remove from available
-  const li = document.createElement('li');
-  li.textContent = name;
-  chosenList.appendChild(li);
-  input.value = '';
-  dropdown.style.display = 'none';
-}
-
-input.addEventListener('input', updateDropdown);
-document.addEventListener('click', (e) => {
-  if (!input.contains(e.target) && !dropdown.contains(e.target))
-    dropdown.style.display = 'none';
-});
-
-// Pairing logic, using only availableNames!
-function makePairs() {
-  let shuffled = [...availableNames];
-  // Shuffle (Fisher-Yates)
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  let result = '';
-  let pairings = {};
-  for (let i = 0; i < shuffled.length; i += 2) {
-    if (i+1 < shuffled.length) {
-      pairings[shuffled[i]] = shuffled[i+1];
+  
+  // Pairing logic, using only availableNames!
+  function makePairs() {
+    let shuffled = [...availableNames];
+    // Shuffle (Fisher-Yates)
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-  }
-  // Odd number: randomly append last name to a pair
-  if (shuffled.length % 2 === 1) {
-    const last = shuffled[shuffled.length - 1];
-    const keys = Object.keys(pairings);
-    if(keys.length){
-      const randomKey = keys[Math.floor(Math.random()*keys.length)];
-      pairings[randomKey] += ` and ${last}`;
+    let result = '';
+    let pairings = {};
+    for (let i = 0; i < shuffled.length; i += 2) {
+      if (i+1 < shuffled.length) {
+        pairings[shuffled[i]] = shuffled[i+1];
+      }
     }
+    if (shuffled.length % 2 === 1) {
+      const last = shuffled[shuffled.length - 1];
+      const keys = Object.keys(pairings);
+      if(keys.length){
+        const randomKey = keys[Math.floor(Math.random()*keys.length)];
+        pairings[randomKey] += ` and ${last}`;
+      }
+    }
+    for (let a in pairings) {
+      result += `${a} is paired with ${pairings[a]}\n`;
+    }
+    pairingsDiv.textContent = result || "(No available names to pair)";
   }
-  // Display
-  for (let a in pairings) {
-    result += `${a} is paired with ${pairings[a]}\n`;
-  }
-  pairingsDiv.textContent = result || "(No available names to pair)";
-}
 </script>
 </body>
 </html>
