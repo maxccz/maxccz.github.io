@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Autocomplete Name Removal</title>
+  <title>Dynamic PairMaker</title>
   <style>
     #dropdown-list {
       border: 1px solid #ccc;
@@ -22,18 +22,24 @@
       background: #ececec;
     }
     #chosen-names { margin-top: 1.2em; }
+    #pairings-list { margin-top: 1.5em; color: #214f27; font-family: monospace; white-space: pre-line; }
+    button { margin-top: 24px; font-size: 1.1em; }
   </style>
 </head>
 <body>
-  <h2>Remove a Name</h2>
-  <div style="position:relative;">
-    <input id="name-input" type="text" autocomplete="off" placeholder="Start typing a name..." style="width:260px; padding:8px; font-size:1em;">
-    <div id="dropdown-list"></div>
-  </div>
-  <div>
-    <h4>Removed Names</h4>
-    <ul id="chosen-names"></ul>
-  </div>
+<h2>Remove a Name</h2>
+<div style="position:relative;">
+  <input id="name-input" type="text" autocomplete="off" placeholder="Start typing a name..." style="width:260px; padding:8px;">
+  <div id="dropdown-list"></div>
+</div>
+<div>
+  <h4>Removed Names</h4>
+  <ul id="chosen-names"></ul>
+</div>
+
+<button onclick="makePairs()">Run PairMaker with Remaining Names</button>
+<div id="pairings-list"></div>
+
 <script>
 const names = `Luke B Aspatore
 Hashim A Ayub
@@ -78,7 +84,9 @@ let availableNames = [...names];
 const input = document.getElementById('name-input');
 const dropdown = document.getElementById('dropdown-list');
 const chosenList = document.getElementById('chosen-names');
+const pairingsDiv = document.getElementById('pairings-list');
 
+// Dropdown logic
 function updateDropdown() {
   const val = input.value.trim().toLowerCase();
   dropdown.innerHTML = '';
@@ -102,7 +110,7 @@ function updateDropdown() {
 }
 
 function selectName(name) {
-  availableNames = availableNames.filter(n => n !== name); // Remove from available names
+  availableNames = availableNames.filter(n => n !== name); // Remove from available
   const li = document.createElement('li');
   li.textContent = name;
   chosenList.appendChild(li);
@@ -111,11 +119,41 @@ function selectName(name) {
 }
 
 input.addEventListener('input', updateDropdown);
-
 document.addEventListener('click', (e) => {
   if (!input.contains(e.target) && !dropdown.contains(e.target))
     dropdown.style.display = 'none';
 });
+
+// Pairing logic, using only availableNames!
+function makePairs() {
+  let shuffled = [...availableNames];
+  // Shuffle (Fisher-Yates)
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  let result = '';
+  let pairings = {};
+  for (let i = 0; i < shuffled.length; i += 2) {
+    if (i+1 < shuffled.length) {
+      pairings[shuffled[i]] = shuffled[i+1];
+    }
+  }
+  // Odd number: randomly append last name to a pair
+  if (shuffled.length % 2 === 1) {
+    const last = shuffled[shuffled.length - 1];
+    const keys = Object.keys(pairings);
+    if(keys.length){
+      const randomKey = keys[Math.floor(Math.random()*keys.length)];
+      pairings[randomKey] += ` and ${last}`;
+    }
+  }
+  // Display
+  for (let a in pairings) {
+    result += `${a} is paired with ${pairings[a]}\n`;
+  }
+  pairingsDiv.textContent = result || "(No available names to pair)";
+}
 </script>
 </body>
 </html>
