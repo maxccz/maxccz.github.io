@@ -10,6 +10,23 @@
       margin: 0;
       padding: 0;
     }
+    header {
+      position: absolute; /* or 'fixed' if you want it to always stay at the top when scrolling */
+      top: 0;
+      left: 0;
+      width: 100%; /* Optional: make it span the full width */
+      padding: 16px 32px; /* Optional: gives space inside header */
+      text-align: left;
+      background: #fbfaf2; /* Match your page bg or set a header bg */
+      z-index: 100; /* Stay above other content */
+    }
+    .center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
     body {
       height: 100vh;
       margin: 0;
@@ -18,6 +35,7 @@
     #bio, #projects, #PairMaker {
       display: none;
     }
+    
     #intro {
       position: fixed;
       top: 0;
@@ -54,15 +72,17 @@
   <div id="intro">Hi!</div>
   
   </div>
-  <section id="bio">
-    <h1>About Me</h1>
-    <p>Your biography goes here.</p>
-    <image src = "images/taishi.jpg">
-  </section>
-  <section id ="projects">
-    <h1>Projects I've Worked On</h1>
-    <p>Projects go here.</p>
-  </section>
+  <div class="center-container">
+    <section id="bio">
+      <h1>About Me</h1>
+      <p>Your biography goes here.</p>
+      <image src = "images/taishi.jpg">
+    </section>
+    <section id ="projects">
+      <h1>Projects I've Worked On</h1>
+      <p>Projects go here.</p>
+    </section>
+  </div>
   <script>
     setTimeout(() => {
       document.getElementById('projects').style.display = 'block';
