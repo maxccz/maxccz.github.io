@@ -58,16 +58,34 @@
       50% {transform: translateY(0%);}
       100% {transform: translateY(100%);}
     }
+    .social-links {
+      display: flex;
+      gap: 18px;
+      font-weight: bold;
+      padding: 10px 0;
+    }
+    
+    .social-links a {
+      color: #444;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .social-links a:hover {
+      color: #1557a0;
+      text-decoration: underline;
+    }
 
   </style>
 </head>
 <body>
   <header>
     <h1> Max Zhang </h1>
-    <nav>
-      <a href="/" class="nav-link">Home</a>
-      <a href="/PairMaker/" class="nav-link">PairMaker</a>
-    </nav>
+    <div class="social-links">
+      <a href="https://instagram.com/maxc_z" target="_blank">Instagram</a>
+      <a href="https://linkedin.com/in/maxczhang" target="_blank">LinkedIn</a>
+      <a href="https://github.com/maxccz" target="_blank">GitHub</a>
+    </div>
   </header>
   <div id="intro">Hi!</div>
   
