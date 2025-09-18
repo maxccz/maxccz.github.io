@@ -20,10 +20,10 @@
       background: #fbfaf2;
       font-family: "Cardo", Courier, monospace;
     }
-    .page{
-      padding-left: 30%;
-      padding-right: 30%;
-    }
+    .page { max-width: 70ch; margin-inline: auto; padding-inline: 2rem; }
+    
+    @media (max-width: 600px) { .page { max-width: none; padding-inline: 0; } }
+    
     h1, h2, h3{
       letter-spacing: 0.04em;
     }
@@ -114,7 +114,7 @@
     </section>
     <section id ="projects">
       <h2>Useful Links</h2>
-      <p><a href="images/dog.jpg">Resume (Updated 2025-09-17)</a></p>
+      <p><p><a href="docs/resume.pdf" target="_blank" rel="noopener">Resume (Updated 2025-09-17)</a></p>Resume (Updated 2025-09-17)</a></p>
       <p><a href="images/dog.jpg">Dog</a></p>
     </section>
   </div>
