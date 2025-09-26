@@ -88,4 +88,7 @@ export default {
 
     for (const symbol of symbols) {
       const cacheKey = `https://cache/intraday?symbol=${symbol}&interval=${interval}&outputsize=${outputsize}`;
-      ctx.waitUntil(fetchAndCache
+      ctx.waitUntil(fetchAndCacheIntraday(symbol, interval, outputsize, cachekey, env));
+    }
+  }
+};
