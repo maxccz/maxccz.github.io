@@ -7,6 +7,3 @@ workers_dev = true
 [vars]
 ORIGIN = "https://m-zhang.me"
 TTL = "300"
-
-[triggers]
-crons = ["5 21 * * *"]
