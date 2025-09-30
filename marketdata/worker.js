@@ -1,5 +1,5 @@
 const ORIGIN = "https://m-zhang.me";
-const TTL = 86400; 
+const TTL = 86400;
 const SYMBOL_RE = /^[A-Z][A-Z0-9.-]{0,6}(,[A-Z][A-Z0-9.-]{0,6})*$/;
 const INTERVALS = new Set(["1min","5min","15min","30min","60min"]);
 
@@ -14,19 +14,15 @@ function corsHeaders(request) {
   };
 }
 
-async function fetchAndCacheIntraday(symbol, interval, outputsize, key, env) {
-  const upstream = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}&outputsize=${encodeURIComponent(outputsize)}&datatype=json&apikey=${env.ALPHAVANTAGE_KEY}`;
-  const r = await fetch(upstream);
-  const body = await r.text();
-  const resp = new Response(body, {
-    status: r.status,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": `public, max-age=${TTL}, s-maxage=${TTL}`,
-    },
+function buildCacheKey(symbol, interval, outputsize) {
+  return new Request(`/intraday?symbol=${symbol}&interval=${interval}&outputsize=${outputsize}`, {
+    cf: { cacheEverything: true }
   });
-  await caches.default.put(new Request(key, { cf: { cacheEverything: true } }), resp.clone());
-  return resp;
+}
+
+async function fetchAlpha(symbol, interval, outputsize, env) {
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}&outputsize=${encodeURIComponent(outputsize)}&datatype=json&apikey=${env.ALPHAVANTAGE_KEY}`;
+  return fetch(url);
 }
 
 export default {
@@ -42,6 +38,7 @@ export default {
     const symbols = url.searchParams.get("symbols") || "AAPL";
     const interval = url.searchParams.get("interval") || "5min";
     const outputsize = url.searchParams.get("outputsize") || "compact";
+    const refresh = (url.searchParams.get("refresh") || "false").toLowerCase() === "true";
 
     if (!SYMBOL_RE.test(symbols)) {
       return new Response("Invalid symbols", { status: 400, headers: corsHeaders(request) });
@@ -51,11 +48,11 @@ export default {
     }
 
     const symbol = symbols.split(",")[0].trim();
-
-    const cacheKey = `https://cache/intraday?symbol=${symbol}&interval=${interval}&outputsize=${outputsize}`;
     const cache = caches.default;
-    const cached = await cache.match(new Request(cacheKey));
-    if (cached) {
+    const cacheKey = buildCacheKey(symbol, interval, outputsize);
+
+    const cached = await cache.match(cacheKey);
+    if (cached && !refresh) {
       return new Response(cached.body, {
         status: cached.status,
         headers: {
@@ -65,30 +62,44 @@ export default {
       });
     }
 
-    const resp = await fetchAndCacheIntraday(symbol, interval, outputsize, cacheKey, env);
-    return new Response(await resp.text(), {
-      status: resp.status,
+    const upstreamResp = await fetchAlpha(symbol, interval, outputsize, env);
+    const text = await upstreamResp.text();
+
+    const isJson = upstreamResp.headers.get("Content-Type")?.includes("application/json");
+    let containsLimitNote = false;
+    if (isJson) {
+      try {
+        const parsed = JSON.parse(text);
+        containsLimitNote = typeof parsed?.Note === "string";
+      } catch {}
+    }
+
+    if (!upstreamResp.ok || containsLimitNote) {
+      if (cached) {
+        return new Response(cached.body, {
+          status: cached.status,
+          headers: {
+            ...Object.fromEntries(cached.headers),
+            ...corsHeaders(request),
+            "X-Worker-Notice": "Upstream limited; served cached data",
+          },
+        });
+      }
+      return new Response("Upstream limited or error; try later or remove refresh", {
+        status: 504,
+        headers: corsHeaders(request),
+      });
+    }
+
+    const resp = new Response(text, {
+      status: upstreamResp.status,
       headers: {
-        ...Object.fromEntries(resp.headers),
+        "Content-Type": "application/json",
+        "Cache-Control": `public, max-age=${TTL}, s-maxage=${TTL}`,
         ...corsHeaders(request),
       },
     });
+    await cache.put(cacheKey, resp.clone());
+    return resp;
   },
-
-  async scheduled(event, env, ctx) {
-    const symbols = ["AAPL","MSFT","GOOGL","AMZN","META"];
-    const interval = "5min";
-    const outputsize = "compact";
-
-    const now = new Date();
-    const hourUTC = now.getUTCHours();
-    if (!(hourUTC === 20 || hourUTC === 21)) {
-      return;
-    }
-
-    for (const symbol of symbols) {
-      const cacheKey = `https://cache/intraday?symbol=${symbol}&interval=${interval}&outputsize=${outputsize}`;
-      ctx.waitUntil(fetchAndCacheIntraday(symbol, interval, outputsize, cachekey, env));
-    }
-  }
 };
