@@ -7,3 +7,6 @@ workers_dev = true
 [vars]
 ORIGIN = "https://m-zhang.me"
 TTL = "300"
+
+[observability]
+enabled = true
