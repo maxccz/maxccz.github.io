@@ -49,7 +49,7 @@ export default {
 
     const symbol = symbols.split(",")[0].trim();
     const cache = caches.default;
-    const cacheKey = buildCacheKey(symbol, interval, outputsize);
+    const cacheKey = `https://cache.example/intraday?symbol=${symbol}&interval=${interval}&outputsize=${outputsize}`;
 
     const cached = await cache.match(cacheKey);
     if (cached && !refresh) {
