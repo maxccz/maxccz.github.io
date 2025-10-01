@@ -80,4 +80,45 @@ export default {
     if (isJson) {
       try {
         const parsed = JSON.parse(bodyText);
-        if (parsed && typeof parsed === "object" && parsed.error
+        if (parsed && typeof parsed === "object" && parsed.error){
+          providerError = true; // treat any "error" object as non-cacheable [web:370]
+        }
+      } catch {
+        // Ignore parse errors; fall back to status check
+      }
+    }
+
+    // On error or rate-limit: fall back to cached data if present
+    if (providerError) {
+      if (cached) {
+        return new Response(cached.body, {
+          status: cached.status,
+          headers: {
+            ...Object.fromEntries(cached.headers),
+            ...corsHeaders(request),
+            "X-Worker-Cache": "HIT",
+            "X-Worker-Notice": "Upstream limited/error; served cached data",
+          },
+        });
+      }
+      // No cache available — return a clear JSON error without caching it
+      return new Response(JSON.stringify({ error: "Upstream limited or error; try later" }), {
+        status: upstreamResp.status === 429 ? 429 : 504,
+        headers: { "Content-Type": "application/json", ...corsHeaders(request) },
+      });
+    }
+
+    // Success: cache and return
+    const resp = new Response(bodyText, {
+      status: upstreamResp.status,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": `public, max-age=${TTL}, s-maxage=${TTL}`,
+        ...corsHeaders(request),
+        "X-Worker-Cache": "MISS",
+      },
+    });
+    await cache.put(cacheKey, resp.clone()); // store only good payloads [web:293]
+    return resp;
+  },
+};
