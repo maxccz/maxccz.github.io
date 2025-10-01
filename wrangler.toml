@@ -10,3 +10,6 @@ TTL = "300"
 
 [observability]
 enabled = true
+
+[triggers]
+crons = ["0 21 * * mon-fri"]
