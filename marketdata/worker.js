@@ -19,12 +19,12 @@ function corsHeaders(request) {
 
 // Build Marketstack EOD URL for one or many symbols
 function buildMarketstackUrl(symbolsCsv, env) {
-  const base = "https://api.marketstack.com/v1/eod";
+  const base = "https://api.marketstack.com/v1/eod/latest";
   const params = new URLSearchParams({
     access_key: env.MARKETSTACK_KEY,   // add via Worker Secret [web:369]
     symbols: symbolsCsv,               // supports comma-separated list [web:369]
-    limit: "1",                        // latest EOD record per symbol [web:369]
-    sort: "DESC"                       // newest first [web:369]
+    sort: "DESC",                       // newest first [web:369]
+    groupby: "symbol"
   });
   return `${base}?${params.toString()}`;
 }
