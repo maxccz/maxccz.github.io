@@ -34,37 +34,47 @@ function isBusinessDay(d) {
   return dow !== 0 && dow !== 6; // add holidays later
 }
 
+// Map symbols to column names in the wide table
+const COLS = { "ZDC.V": "ZDC_V", "SHOP": "SHOP", "CLS.V": "CLS_V" };
+
 async function fetchUpsertAndCache(symbolsCsv, env) {
   const url = buildMarketstackUrl(symbolsCsv, env);
   const r = await fetch(url);
   if (!r.ok) return;
-  const text = await r.text();
 
-  // Upsert into D1
-  let payload;
-  try { payload = JSON.parse(text); } catch { return; }
-  for (const row of payload.data ?? []) {
-    const symbol = row.symbol;
-    const date = String(row.date).slice(0, 10);
-    const close = Number(row.close);
-    const volume = Number(row.volume ?? 0);
-    await env.DB.prepare(
-      `INSERT INTO quotes (symbol, date, close, volume)
-       VALUES (?1, ?2, ?3, ?4)
-       ON CONFLICT(symbol, date) DO UPDATE SET
-         close = excluded.close,
-         volume = excluded.volume`
-    ).bind(symbol, date, close, volume).run();
+  const text = await r.text();
+  let data;
+  try { data = JSON.parse(text); } catch { return; }
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  // 1) Ensure date row exists once
+  await env.DB.prepare(
+    `INSERT OR IGNORE INTO prices (date) VALUES (?1)`
+  ).bind(today).run(); // create row if missing [web:176]
+
+  // 2) Update per-ticker columns (identifier must be whitelisted)
+  for (const row of data.data ?? []) {
+    const col = COLS[row.symbol];
+    if (!col) continue;
+    const sql = `UPDATE prices SET ${col} = ?1 WHERE date = ?2`; // identifier inline [web:195]
+    await env.DB.prepare(sql).bind(Number(row.close), today).run();
   }
 
-  // Optional: warm a synthetic edge cache key for the API worker
+  // 3) Recompute total for the date (sum the known columns)
+  const totalSql = `
+    UPDATE prices
+    SET total = COALESCE(ZDC_V,0) + COALESCE(SHOP,0) + COALESCE(CLS_V,0)
+    WHERE date = ?1
+  `;
+  await env.DB.prepare(totalSql).bind(today).run(); // recompute total [web:174]
+
+  // 4) Optional: warm cache with the upstream payload or a derived view
   const cache = await caches.open("eod-cache");
   const cacheKey = `https://edge-cache.local/eod?symbols=${encodeURIComponent(symbolsCsv)}`;
   await cache.put(cacheKey, new Response(text, {
     status: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": `public, max-age=${TTL}, s-maxage=${TTL}`,
-    }
+    headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=86400, s-maxage=86400" }
   }));
 }
+
