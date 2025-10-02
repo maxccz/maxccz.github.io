@@ -1,0 +1,16 @@
+name = "marketdata-worker"
+main = "worker.js"
+compatibility_date = "2025-10-02"
+
+[triggers]
+crons = ["0 22 * * *"] 
+
+[[d1_databases]]
+binding = "DB"
+database_name = "stock_data_history"
+database_id = "139372d8-73fd-46b7-b118-cccb247d19e7"
+
+[vars]
+ORIGIN = "https://m-zhang.me"
+WRITE_TO_D1 = "true"
+
