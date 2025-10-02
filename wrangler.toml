@@ -13,3 +13,8 @@ enabled = true
 
 [triggers]
 crons = ["0 21 * * mon-fri"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "stock_data_history"
+database_id = "139372d8-73fd-46b7-b118-cccb247d19e7"
