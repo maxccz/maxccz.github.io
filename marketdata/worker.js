@@ -50,20 +50,20 @@ async function fetchUpsertAndCache(symbolsCsv, env) {
 
   // 1) Ensure date row exists once
   await env.DB.prepare(
-    `INSERT OR IGNORE INTO prices (date) VALUES (?1)`
+    `INSERT OR IGNORE INTO Daily_Gains (date) VALUES (?1)`
   ).bind(today).run(); // create row if missing [web:176]
 
   // 2) Update per-ticker columns (identifier must be whitelisted)
   for (const row of data.data ?? []) {
     const col = COLS[row.symbol];
     if (!col) continue;
-    const sql = `UPDATE prices SET ${col} = ?1 WHERE date = ?2`; // identifier inline [web:195]
+    const sql = `UPDATE Daily_Gains SET ${col} = ?1 WHERE date = ?2`; // identifier inline [web:195]
     await env.DB.prepare(sql).bind(Number(row.close), today).run();
   }
 
   // 3) Recompute total for the date (sum the known columns)
   const totalSql = `
-    UPDATE prices
+    UPDATE Daily_Gains
     SET total = COALESCE(ZDC_V,0) + COALESCE(SHOP,0) + COALESCE(CLS_V,0)
     WHERE date = ?1
   `;
