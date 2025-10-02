@@ -4,6 +4,7 @@ const TTL = 86400;
 
 // Simple validation: comma-separated tickers of A–Z, digits, ., -
 const SYMBOL_RE = /^[A-Z][A-Z0-9.-]{0,6}(,[A-Z][A-Z0-9.-]{0,6})*$/;  // e.g., AAPL,MSFT [web:369]
+const TICKERS = ["ZDC.V","SHOP","CLS.V"];
 
 // CORS helper
 function corsHeaders(request) {
@@ -121,4 +122,37 @@ export default {
     await cache.put(cacheKey, resp.clone()); // store only good payloads [web:293]
     return resp;
   },
+
+  async scheduled(event, env, ctx) {
+    if (!isBusinessDay(new Date())) return;
+
+    // Batch into comma-separated groups (Marketstack supports multiple symbols)
+    const batchSize = 50; // stay under provider limits
+    for (let i = 0; i < TICKERS.length; i += batchSize) {
+      const symbolsCsv = TICKERS.slice(i, i + batchSize).join(",");
+      ctx.waitUntil(updateSymbols(symbolsCsv, env)); // reuse core logic
+    }
+  }
 };
+
+function isBusinessDay(d) {
+  const day = d.getUTCDay();
+  return day !== 0 && day !== 6; // add holiday logic later
+}
+
+async function updateSymbols(symbolsCsv, env) {
+  // Call Marketstack and cache successful payloads using the same helpers
+  const upstreamUrl = buildMarketstackUrl(symbolsCsv, env); // uses env.MARKETSTACK_KEY
+  const resp = await fetch(upstreamUrl);
+  if (!resp.ok) return;
+  const text = await resp.text();
+  const cache = await caches.open("eod-cache");
+  const cacheKey = `https://edge-cache.local/eod?symbols=${encodeURIComponent(symbolsCsv)}`;
+  await cache.put(
+    cacheKey,
+    new Response(text, {
+      status: 200,
+      headers: { "Content-Type": "application/json", "Cache-Control": `public, max-age=${TTL}, s-maxage=${TTL}` }
+    })
+  );
+}
