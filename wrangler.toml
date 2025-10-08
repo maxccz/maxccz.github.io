@@ -16,3 +16,7 @@ database_id = "139372d8-73fd-46b7-b118-cccb247d19e7"
 ORIGIN = "https://m-zhang.me"
 WRITE_TO_D1 = "true"
 
+[observability]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
