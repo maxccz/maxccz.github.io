@@ -1,5 +1,5 @@
 // marketdata/worker.js
-const TICKERS = ["ZDC.V","SHOP","CLS.V"];
+const TICKERS = ["ZDC.V","SHOP","PTU.V"];
 const TTL = 86400;
 
 function buildMarketstackUrl(symbolsCsv, env) {
@@ -35,7 +35,7 @@ function isBusinessDay(d) {
 }
 
 // Map symbols to column names in the wide table
-const COLS = { "ZDC.V": "ZDC_V", "SHOP": "SHOP", "CLS.V": "CLS_V" };
+const COLS = { "ZDC.V": "ZDC_V", "SHOP": "SHOP", "PTU.V": "PTU_V" };
 
 async function fetchUpsertAndCache(symbolsCsv, env) {
   const url = buildMarketstackUrl(symbolsCsv, env);
