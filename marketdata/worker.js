@@ -1,4 +1,4 @@
-const TICKERS = ["SHOP","PTU.V"];
+const TICKERS = ["SHOP","PTU.V", "MSFT"];
 const TTL = 86400;
 
 function buildMarketstackUrl(symbolsCsv, env) {
@@ -32,7 +32,7 @@ function isBusinessDay(d) {
   return dow !== 0 && dow !== 6; 
 }
 
-const COLS = {"SHOP": "SHOP", "PTU.V": "PTU_V" };
+const COLS = {"SHOP": "SHOP", "PTU.V": "PTU_V", "MSFT": "MSFT"};
 
 async function fetchUpsertAndCache(symbolsCsv, env) {
   const url = buildMarketstackUrl(symbolsCsv, env);
